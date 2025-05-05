@@ -29,13 +29,19 @@ jobs:
       - name: Build the application
         run: npm run build
 
-      - name: Deploy to local Ubuntu server
+      - name: Create SSH directory
+        run: mkdir -p ~/.ssh
+
+      - name: Add private key
         run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H "$LOCAL_IP" >> ~/.ssh/known_hosts
-          ssh "$USERNAME@$LOCAL_IP"
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/key.pem
+          chmod 600 ~/.ssh/key.pem
+
+      - name: Add server to known hosts
+        run: ssh-keyscan -H "$LOCAL_IP" >> ~/.ssh/known_hosts
+
+      - name: Test SSH connection
+        run: ssh -i ~/.ssh/key.pem "$USERNAME@$LOCAL_IP"
       # No need to pass env again here because it's already inherited globally
 
       - name: Run on ubuntu server
