@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install dependencies
         run: npm install
@@ -26,19 +26,12 @@ jobs:
 
       - name: Deploy to local Ubuntu server
         run: |
-          echo "$SSH_PRIVATE_KEY" > key.pem
-          chmod 600 key.pem
+          # Add the SSH private key to the SSH agent
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "${{ secrets.LOCAL_IP }}" >> ~/.ssh/known_hosts
+          ssh "${{ secrets.USERNAME }}@${{ secrets.LOCAL_IP }}"
 
-          # Replace `ubuntu@your.local.ip` with your local machine's reachable IP
-          rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" ./src/ ubuntu@your.local.ip:/home/ubuntu/mern/src
-          rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" ./app.js ubuntu@your.local.ip:/home/ubuntu/mern/app.js
-          rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" ./package.json ubuntu@your.local.ip:/home/ubuntu/mern/package.json
-          rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" ./package-lock.json ubuntu@your.local.ip:/home/ubuntu/mern/package-lock.json
-
-          ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@your.local.ip "
-            cd /home/ubuntu/mern &&
-            npm install &&
-            pm2 restart all || pm2 start app.js --name mern-api
-          "
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Run on ubuntu server
+        run: npm run start-prod
