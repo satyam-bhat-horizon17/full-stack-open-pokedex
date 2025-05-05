@@ -9,6 +9,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      LOCAL_IP: ${{ secrets.LOCAL_IP }}
+      USERNAME: ${{ secrets.USERNAME }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -26,12 +31,12 @@ jobs:
 
       - name: Deploy to local Ubuntu server
         run: |
-          # Add the SSH private key to the SSH agent
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H "${{ secrets.LOCAL_IP }}" >> ~/.ssh/known_hosts
-          ssh "${{ secrets.USERNAME }}@${{ secrets.LOCAL_IP }}"
+          ssh-keyscan -H "$LOCAL_IP" >> ~/.ssh/known_hosts
+          ssh "$USERNAME@$LOCAL_IP"
+      # No need to pass env again here because it's already inherited globally
 
       - name: Run on ubuntu server
         run: npm run start-prod
