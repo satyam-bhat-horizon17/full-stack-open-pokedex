@@ -35,7 +35,7 @@ jobs:
       - name: Add private key
         run: |
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/key.pem
-          chmod 600 ~/.ssh
+          chmod 700 ~/.ssh
 
       - name: Add server to known hosts
         run: ssh-keyscan -H "$LOCAL_IP" >> ~/.ssh/known_hosts
