@@ -3,7 +3,7 @@ name: Local MERN CI/CD
 on:
   push:
     branches:
-      - dev-test
+      - Satyam
 
 jobs:
   deploy:
