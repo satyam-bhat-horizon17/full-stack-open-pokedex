@@ -30,8 +30,8 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.LOCAL_IP }} >> ~/.ssh/known_hosts
-          ssh ${{ secrets.USERNAME }}@${{ secrets.LOCAL_IP }}
+          ssh-keyscan -H "${{ secrets.LOCAL_IP }}" >> ~/.ssh/known_hosts
+          ssh "${{ secrets.USERNAME }}@${{ secrets.LOCAL_IP }}"
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
