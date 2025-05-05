@@ -35,13 +35,14 @@ jobs:
       - name: Add private key
         run: |
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/key.pem
-          chmod 700 ~/.ssh
+          chmod 600 ~/.ssh/key.pem
 
       - name: Echo LOCAL_IP
         run: echo "USERNAME is $USERNAME"
 
-      # - name: Add server to known hosts
-      #   run: ssh-keyscan -H "$LOCAL_IP" >> ~/.ssh/known_hosts
+      - name: Add server to known hosts
+        run: ssh-keyscan -H "$LOCAL_IP" >> ~/.ssh/known_hosts
+        
 
       - name: Test SSH connection
         run: ssh -i ~/.ssh/key.pem "$USERNAME@$LOCAL_IP"
