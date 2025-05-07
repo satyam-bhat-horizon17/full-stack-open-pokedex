@@ -14,11 +14,15 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Execute remote command via SSH
-        uses: appleboy/ssh-action@v0.1.5
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.LOCAL_IP }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            ls
+            echo "Connected successfully to:"
+            hostname
+            echo "Listing contents of current directory:"
+            pwd
+            ls -la
